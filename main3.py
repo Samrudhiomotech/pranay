@@ -1,9 +1,3 @@
-"""
-Solar Power Forecasting Dashboard - Rural India Study
-This study investigates hybrid predictive algorithms for long-term solar power forecasting 
-in rural regions of India using publicly available weather and solar irradiance data.
-"""
-
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -90,32 +84,61 @@ st.markdown("""
         max-width: 1400px;
     }
     
-    /* Sidebar styling */
+    /* Sidebar styling - WHITE BACKGROUND */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, var(--gray-900) 0%, var(--gray-800) 100%);
-        border-right: 1px solid var(--gray-700);
+        background: white;
+        border-right: 1px solid var(--gray-300);
         padding: 1.5rem 0.5rem;
     }
     
     [data-testid="stSidebar"] * {
-        color: var(--gray-100) !important;
+        color: var(--gray-800) !important;
     }
     
     [data-testid="stSidebar"] .stSelectbox label,
     [data-testid="stSidebar"] .stSlider label,
-    [data-testid="stSidebar"] .stDateInput label {
-        color: var(--gray-300) !important;
+    [data-testid="stSidebar"] .stDateInput label,
+    [data-testid="stSidebar"] .stNumberInput label {
+        color: var(--gray-700) !important;
         font-weight: 500;
     }
     
     [data-testid="stSidebar"] .stSelectbox > div > div {
-        background-color: var(--gray-700);
-        border: 1px solid var(--gray-600);
-        color: white !important;
+        background-color: white;
+        border: 1px solid var(--gray-300);
+        color: var(--gray-800) !important;
     }
     
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
+        color: var(--primary-dark) !important;
+    }
+    
+    /* WHITE SLIDER STYLING */
     [data-testid="stSidebar"] .stSlider > div > div > div {
-        background-color: var(--accent);
+        background-color: var(--gray-200) !important;
+    }
+    
+    [data-testid="stSidebar"] .stSlider > div > div > div > div {
+        background-color: var(--primary) !important;
+    }
+    
+    /* Sidebar markdown text */
+    [data-testid="stSidebar"] .stMarkdown {
+        color: var(--gray-700) !important;
+    }
+    
+    /* Sidebar info boxes */
+    [data-testid="stSidebar"] .stAlert {
+        background-color: var(--gray-100);
+        border-left: 4px solid var(--primary);
+        color: var(--gray-800) !important;
+    }
+    
+    /* Sidebar dividers */
+    [data-testid="stSidebar"] hr {
+        border-color: var(--gray-300);
     }
     
     /* Header styling */
@@ -130,27 +153,6 @@ st.markdown("""
         border-bottom: 3px solid var(--accent);
         background: linear-gradient(90deg, rgba(10,47,68,0.03) 0%, rgba(233,183,65,0.05) 100%);
         border-radius: 0 0 10px 10px;
-    }
-    
-    .study-objective {
-        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
-        color: white !important;
-        padding: 1.5rem 2rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-        box-shadow: 0 4px 12px rgba(10,47,68,0.15);
-        border-left: 6px solid var(--accent);
-    }
-    
-    .study-objective * {
-        color: white !important;
-    }
-    
-    .study-objective h3 {
-        margin-top: 0;
-        font-weight: 600;
-        color: var(--accent) !important;
-        letter-spacing: -0.3px;
     }
     
     .sub-header {
@@ -302,28 +304,6 @@ st.markdown("""
 
 
 # =============================================================================
-# STUDY OBJECTIVE - Displayed prominently
-# =============================================================================
-def display_study_objective():
-    st.markdown("""
-    <div class="study-objective">
-        <h3>🔬 Research Study: Hybrid Predictive Algorithms for Rural Solar Forecasting</h3>
-        <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">
-        This study investigates the development of hybrid predictive algorithms to forecast long-term solar power output 
-        in <strong>rural regions of India</strong> by leveraging publicly available weather patterns and solar irradiance data.
-        </p>
-        <ul style="margin-top: 0.5rem; margin-bottom: 0;">
-            <li><strong>Objective:</strong> Compare and integrate machine learning methods (Random Forest, LSTM) with statistical 
-            approaches (ARIMA, SARIMA) to capture both linear and non-linear dependencies</li>
-            <li><strong>Focus:</strong> Seasonal and interannual trends for sustainable rural energy deployment</li>
-            <li><strong>Validation:</strong> Data from select Indian meteorological stations across varying climatic profiles</li>
-            <li><strong>Evaluation:</strong> Forecast accuracy, interpretability, and cross-region adaptability</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-
-# =============================================================================
 # ENHANCED DATA COLLECTOR - Multiple Free APIs with Fallbacks
 # =============================================================================
 class SolarDataCollector:
@@ -397,7 +377,7 @@ class SolarDataCollector:
                 return df
             return None
         except Exception as e:
-            st.warning(f"⚠️ NASA POWER API: {str(e)[:100]}...")
+            st.warning(f"NASA POWER API: {str(e)[:100]}...")
             return None
     
     def get_solar_data_open_meteo(self, latitude, longitude, start_date, end_date):
@@ -436,7 +416,7 @@ class SolarDataCollector:
                 return df
             return None
         except Exception as e:
-            st.warning(f"⚠️ Open-Meteo API: {str(e)[:100]}...")
+            st.warning(f"Open-Meteo API: {str(e)[:100]}...")
             return None
     
     def generate_climate_aware_synthetic_data(self, latitude, longitude, start_date, end_date):
@@ -509,26 +489,26 @@ class SolarDataCollector:
         status_text = st.empty()
         
         # Try NASA POWER first
-        status_text.text("🛰️ Fetching data from NASA POWER API...")
+        status_text.text("Fetching data from NASA POWER API...")
         progress_bar.progress(20)
         df = self.get_solar_data_nasa_power(latitude, longitude, start_date, end_date)
         
         # Fallback to Open-Meteo if NASA fails
         if df is None:
-            status_text.text("🌤️ NASA API unavailable. Trying Open-Meteo...")
+            status_text.text("NASA API unavailable. Trying Open-Meteo...")
             progress_bar.progress(40)
             df = self.get_solar_data_open_meteo(latitude, longitude, start_date, end_date)
         
         # Generate synthetic data if all APIs fail
         if df is None:
-            status_text.text("🧪 APIs unavailable. Generating climate-aware synthetic data...")
+            status_text.text("APIs unavailable. Generating climate-aware synthetic data...")
             progress_bar.progress(60)
             df = self.generate_climate_aware_synthetic_data(latitude, longitude, start_date, end_date)
-            st.info(f"📍 Using climate-aware synthetic data for {location_name} ({df['climate_zone'].iloc[0]} zone)")
+            st.info(f"Using climate-aware synthetic data for {location_name} ({df['climate_zone'].iloc[0]} zone)")
         
         # Post-process data
         progress_bar.progress(80)
-        status_text.text("📊 Processing and validating data...")
+        status_text.text("Processing and validating data...")
         
         # Ensure required columns exist
         required_cols = ['solar_irradiance_kwh_m2', 'temperature_c']
@@ -554,7 +534,7 @@ class SolarDataCollector:
             df[col] = df[col].fillna(df[col].mean())
         
         progress_bar.progress(100)
-        status_text.text(f"✅ Data collection complete: {len(df)} days from {df['data_source'].iloc[0]}")
+        status_text.text(f"Data collection complete: {len(df)} days from {df['data_source'].iloc[0]}")
         time.sleep(0.8)
         status_text.empty()
         progress_bar.empty()
@@ -574,7 +554,7 @@ def calculate_solar_power(df, panel_capacity_kw=5.0, efficiency=0.17):
     df = df.copy()
     
     if 'solar_irradiance_kwh_m2' not in df.columns:
-        st.warning("⚠️ No irradiance data found. Using default values.")
+        st.warning("No irradiance data found. Using default values.")
         df['solar_irradiance_kwh_m2'] = 5.0
     
     # Panel area calculation (fixed for 5kW system at 17% efficiency)
@@ -813,7 +793,7 @@ class HybridForecastingModels:
     def train_lstm(self, X_train, y_train, X_test, y_test, epochs=50, batch_size=32):
         """LSTM model for sequence forecasting"""
         if not TENSORFLOW_AVAILABLE:
-            st.warning("⚠️ TensorFlow not installed. Skipping LSTM.")
+            st.warning("TensorFlow not installed. Skipping LSTM.")
             return None, None
         
         try:
@@ -875,7 +855,7 @@ class HybridForecastingModels:
                 return None, None
                 
         except Exception as e:
-            st.warning(f"⚠️ LSTM training failed: {str(e)[:100]}")
+            st.warning(f"LSTM training failed: {str(e)[:100]}")
             return None, None
     
     def train_arima(self, y_train, y_test, order=(2,1,2)):
@@ -893,7 +873,7 @@ class HybridForecastingModels:
             
             return metrics, y_pred
         except Exception as e:
-            st.warning(f"⚠️ ARIMA failed: {str(e)[:100]}")
+            st.warning(f"ARIMA failed: {str(e)[:100]}")
             return None, None
     
     def train_sarima(self, y_train, y_test, order=(1,1,1), seasonal_order=(1,1,1,12)):
@@ -911,7 +891,7 @@ class HybridForecastingModels:
             
             return metrics, y_pred
         except Exception as e:
-            st.warning(f"⚠️ SARIMA failed: {str(e)[:100]}")
+            st.warning(f"SARIMA failed: {str(e)[:100]}")
             return None, None
     
     def train_exponential_smoothing(self, y_train, y_test, seasonal_periods=12):
@@ -929,7 +909,7 @@ class HybridForecastingModels:
             
             return metrics, y_pred
         except Exception as e:
-            st.warning(f"⚠️ Exponential Smoothing failed: {str(e)[:100]}")
+            st.warning(f"Exponential Smoothing failed: {str(e)[:100]}")
             return None, None
     
     def train_ensemble_model(self, X_train, y_train, X_test, y_test):
@@ -1047,7 +1027,7 @@ def plot_historical_data(df, location_name):
     fig.update_layout(
         height=550,
         title={
-            'text': f"📍 {location_name} - Historical Analysis",
+            'text': f"{location_name} - Historical Analysis",
             'font': {'size': 18, 'color': '#0A2F44', 'weight': 600}
         },
         showlegend=True,
@@ -1099,7 +1079,7 @@ def plot_predictions_vs_actual(y_test, predictions_dict, test_dates):
     
     fig.update_layout(
         title={
-            'text': '📈 Model Predictions vs Actual Values',
+            'text': 'Model Predictions vs Actual Values',
             'font': {'size': 18, 'color': '#0A2F44', 'weight': 600}
         },
         xaxis_title='Date',
@@ -1214,37 +1194,34 @@ def plot_seasonal_patterns(df):
 # =============================================================================
 def main():
     # Display header
-    st.markdown('<p class="main-header">☀️ Solar Power Forecasting Dashboard</p>',
+    st.markdown('<p class="main-header">Solar Power Forecasting Dashboard</p>',
                 unsafe_allow_html=True)
-    
-    # Display study objective
-    display_study_objective()
     
     # =============================================================================
     # SIDEBAR - Configuration
     # =============================================================================
-    st.sidebar.title("📋 Configuration Panel")
+    st.sidebar.title("Configuration Panel")
     st.sidebar.markdown("---")
     
     # Location selection - Rural India focus
-    st.sidebar.markdown("### 📍 Location Settings")
+    st.sidebar.markdown("### Location Settings")
     
     RURAL_LOCATIONS = {
-        '🏜️ Jodhpur, Rajasthan (Arid)': (26.2389, 73.0243),
-        '🏜️ Jaisalmer, Rajasthan (Desert)': (26.9157, 70.9083),
-        '🌾 Anantapur, Andhra Pradesh (Semi-arid)': (14.6819, 77.6006),
-        '🏜️ Bikaner, Rajasthan (Arid)': (28.0229, 73.3119),
-        '🌾 Kurnool, Andhra Pradesh (Semi-arid)': (15.8281, 78.0373),
-        '⛰️ Nashik, Maharashtra (Plateau)': (19.9975, 73.7898),
-        '🌾 Solapur, Maharashtra (Semi-arid)': (17.6599, 75.9064),
-        '🏔️ Leh, Ladakh (Mountain Desert)': (34.1526, 77.5771),
-        '🏖️ Bhuj, Gujarat (Coastal)': (23.2420, 69.6669),
-        '🌴 Thiruvananthapuram, Kerala (Tropical)': (8.5241, 76.9366),
-        '🌾 Nagpur, Maharashtra (Continental)': (21.1458, 79.0882),
-        '🏔️ Shimla, Himachal Pradesh (Hill)': (31.1048, 77.1734),
-        '🌾 Patna, Bihar (Gangetic Plain)': (25.5941, 85.1376),
-        '🏝️ Port Blair, Andaman (Island)': (11.7401, 92.6586),
-        '📍 Custom Location': None
+        'Jodhpur, Rajasthan (Arid)': (26.2389, 73.0243),
+        'Jaisalmer, Rajasthan (Desert)': (26.9157, 70.9083),
+        'Anantapur, Andhra Pradesh (Semi-arid)': (14.6819, 77.6006),
+        'Bikaner, Rajasthan (Arid)': (28.0229, 73.3119),
+        'Kurnool, Andhra Pradesh (Semi-arid)': (15.8281, 78.0373),
+        'Nashik, Maharashtra (Plateau)': (19.9975, 73.7898),
+        'Solapur, Maharashtra (Semi-arid)': (17.6599, 75.9064),
+        'Leh, Ladakh (Mountain Desert)': (34.1526, 77.5771),
+        'Bhuj, Gujarat (Coastal)': (23.2420, 69.6669),
+        'Thiruvananthapuram, Kerala (Tropical)': (8.5241, 76.9366),
+        'Nagpur, Maharashtra (Continental)': (21.1458, 79.0882),
+        'Shimla, Himachal Pradesh (Hill)': (31.1048, 77.1734),
+        'Patna, Bihar (Gangetic Plain)': (25.5941, 85.1376),
+        'Port Blair, Andaman (Island)': (11.7401, 92.6586),
+        'Custom Location': None
     }
     
     location_choice = st.sidebar.selectbox(
@@ -1253,7 +1230,7 @@ def main():
         index=0
     )
     
-    if location_choice == '📍 Custom Location':
+    if location_choice == 'Custom Location':
         location_name = st.sidebar.text_input("Location Name", "Custom Location")
         col1, col2 = st.sidebar.columns(2)
         with col1:
@@ -1261,14 +1238,13 @@ def main():
         with col2:
             longitude = st.number_input("Longitude", value=78.9629, format="%.4f")
     else:
-        location_name = location_choice.split(')')[0].split('(')[0].strip()
-        location_name = location_name.split(' ')[1] if ' ' in location_name else location_name
+        location_name = location_choice.split('(')[0].strip()
         latitude, longitude = RURAL_LOCATIONS[location_choice]
     
     st.sidebar.markdown("---")
     
     # Data period
-    st.sidebar.markdown("### 📅 Data Period")
+    st.sidebar.markdown("### Data Period")
     
     today = datetime.now().date()
     default_end = today - timedelta(days=1)
@@ -1281,12 +1257,12 @@ def main():
         end_date = st.date_input("End Date", default_end)
     
     if start_date >= end_date:
-        st.sidebar.error("❌ Start date must be before end date")
+        st.sidebar.error("Start date must be before end date")
         start_date = end_date - timedelta(days=365)
     
     # Fixed system parameters - no user input
     st.sidebar.markdown("---")
-    st.sidebar.markdown("### ⚡ System Configuration")
+    st.sidebar.markdown("### System Configuration")
     st.sidebar.info(
         "**Standard Solar PV System**\n"
         "• Capacity: 5.0 kW\n"
@@ -1298,7 +1274,7 @@ def main():
     st.sidebar.markdown("---")
     
     # Model selection
-    st.sidebar.markdown("### 🤖 Models to Train")
+    st.sidebar.markdown("### Models to Train")
     
     available_models = [
         'Random Forest', 
@@ -1322,15 +1298,15 @@ def main():
     )
     
     # Advanced settings
-    with st.sidebar.expander("⚙️ Advanced Settings"):
+    with st.sidebar.expander("Advanced Settings"):
         test_size = st.slider("Test set size (%)", 10, 30, 20)
         random_state = st.number_input("Random seed", 1, 100, 42)
     
     st.sidebar.markdown("---")
     st.sidebar.markdown(
         "<p style='text-align: center; color: #9AA5B1; font-size: 0.8rem;'>"
-        "📊 Data sources: NASA POWER, Open-Meteo, SolarGIS<br>"
-        "🎯 Rural India Solar Forecasting Study</p>",
+        "Data sources: NASA POWER, Open-Meteo, SolarGIS<br>"
+        "Rural India Solar Forecasting Study</p>",
         unsafe_allow_html=True
     )
     
@@ -1355,38 +1331,38 @@ def main():
     # =============================================================================
     # MAIN TABS
     # =============================================================================
-    tab1, tab2, tab3 = st.tabs(["📊 Data Collection", "🤖 Model Training", "📈 Analysis & Insights"])
+    tab1, tab2, tab3 = st.tabs(["Data Collection", "Model Training", "Analysis & Insights"])
     
     # =============================================================================
     # TAB 1: DATA COLLECTION
     # =============================================================================
     with tab1:
-        st.markdown('<p class="sub-header">📡 Data Collection & Analysis</p>', unsafe_allow_html=True)
+        st.markdown('<p class="sub-header">Data Collection & Analysis</p>', unsafe_allow_html=True)
         
         # Location info cards
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.metric("📍 Location", location_name)
+            st.metric("Location", location_name)
             st.markdown('</div>', unsafe_allow_html=True)
         with col2:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
             days_diff = (end_date - start_date).days
-            st.metric("📅 Period", f"{days_diff} days")
+            st.metric("Period", f"{days_diff} days")
             st.markdown('</div>', unsafe_allow_html=True)
         with col3:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.metric("🌐 Coordinates", f"{latitude:.2f}°, {longitude:.2f}°")
+            st.metric("Coordinates", f"{latitude:.2f}°, {longitude:.2f}°")
             st.markdown('</div>', unsafe_allow_html=True)
         with col4:
             st.markdown('<div class="metric-card">', unsafe_allow_html=True)
-            st.metric("⚡ System", "5.0 kW")
+            st.metric("System", "5.0 kW")
             st.markdown('</div>', unsafe_allow_html=True)
         
         # Collect data button
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            collect_button = st.button("🔄 Collect & Process Data", type="primary", use_container_width=True)
+            collect_button = st.button("Collect & Process Data", type="primary", use_container_width=True)
         
         if collect_button:
             with st.spinner("Collecting and processing data..."):
@@ -1414,10 +1390,10 @@ def main():
                         st.session_state.data = df
                         st.session_state.data_source = df['data_source'].iloc[0] if 'data_source' in df.columns else 'Unknown'
                         
-                        st.success(f"✅ Data collection successful: {len(df)} days from {st.session_state.data_source}")
+                        st.success(f"Data collection successful: {len(df)} days from {st.session_state.data_source}")
                         
                         # Summary metrics
-                        st.markdown("### 📊 Data Summary")
+                        st.markdown("### Data Summary")
                         col1, col2, col3, col4 = st.columns(4)
                         
                         with col1:
@@ -1437,27 +1413,27 @@ def main():
                         
                         # Climate zone info
                         if 'climate_zone' in df.columns:
-                            st.info(f"🌍 Climate Zone: {df['climate_zone'].iloc[0]}")
+                            st.info(f"Climate Zone: {df['climate_zone'].iloc[0]}")
                         
                     else:
-                        st.error("❌ Failed to collect data. Please try again.")
+                        st.error("Failed to collect data. Please try again.")
                         
                 except Exception as e:
-                    st.error(f"❌ Error: {str(e)}")
+                    st.error(f"Error: {str(e)}")
         
         # Display data if available
         if st.session_state.data is not None:
             df = st.session_state.data
             
             st.markdown("---")
-            st.markdown("### 📈 Historical Data Visualization")
+            st.markdown("### Historical Data Visualization")
             
             # Historical plot
             fig_historical = plot_historical_data(df, location_name)
             st.plotly_chart(fig_historical, use_container_width=True)
             
             # Data table expander
-            with st.expander("📋 View Data Table"):
+            with st.expander("View Data Table"):
                 display_cols = ['date', 'solar_power_kwh', 'solar_irradiance_kwh_m2', 
                               'temperature_c', 'relative_humidity', 'cloudcover_mean']
                 
@@ -1475,7 +1451,7 @@ def main():
                 # Download button
                 csv = df.to_csv(index=False)
                 st.download_button(
-                    label="📥 Download Full Dataset (CSV)",
+                    label="Download Full Dataset (CSV)",
                     data=csv,
                     file_name=f"solar_data_{location_name}_{start_date}_{end_date}.csv",
                     mime="text/csv",
@@ -1483,7 +1459,7 @@ def main():
                 )
             
             # Basic statistics
-            st.markdown("### 📊 Descriptive Statistics")
+            st.markdown("### Descriptive Statistics")
             
             if 'solar_power_kwh' in df.columns:
                 col1, col2 = st.columns(2)
@@ -1520,21 +1496,21 @@ def main():
                     env_df = pd.DataFrame(env_stats, columns=['Parameter', 'Mean ± Std'])
                     st.dataframe(env_df, use_container_width=True, hide_index=True)
         else:
-            st.info("👆 Click 'Collect & Process Data' to begin analysis")
+            st.info("Click 'Collect & Process Data' to begin analysis")
     
     # =============================================================================
     # TAB 2: MODEL TRAINING
     # =============================================================================
     with tab2:
-        st.markdown('<p class="sub-header">🤖 Model Training & Evaluation</p>', unsafe_allow_html=True)
+        st.markdown('<p class="sub-header">Model Training & Evaluation</p>', unsafe_allow_html=True)
         
         if st.session_state.data is not None:
             df = st.session_state.data
             
             if 'solar_power_kwh' not in df.columns:
-                st.error("❌ Solar power data not available. Please collect data first.")
+                st.error("Solar power data not available. Please collect data first.")
             else:
-                st.success(f"✅ Dataset ready: {len(df)} days of solar generation data")
+                st.success(f"Dataset ready: {len(df)} days of solar generation data")
                 
                 # Dataset info
                 col1, col2, col3 = st.columns(3)
@@ -1550,11 +1526,11 @@ def main():
                 # Train models button
                 col1, col2, col3 = st.columns([1, 2, 1])
                 with col2:
-                    train_button = st.button("🚀 Train Selected Models", type="primary", use_container_width=True)
+                    train_button = st.button("Train Selected Models", type="primary", use_container_width=True)
                 
                 if train_button:
                     if not selected_models:
-                        st.error("❌ Please select at least one model")
+                        st.error("Please select at least one model")
                     else:
                         with st.spinner(f"Training {len(selected_models)} models..."):
                             try:
@@ -1590,7 +1566,7 @@ def main():
                                 st.session_state.y_test = y_test
                                 st.session_state.test_dates = df_features['date'].iloc[split_idx:].values
                                 
-                                st.info(f"📊 Training set: {len(X_train)} days | Test set: {len(X_test)} days")
+                                st.info(f"Training set: {len(X_train)} days | Test set: {len(X_test)} days")
                                 
                                 # Train models
                                 forecaster = st.session_state.forecaster
@@ -1651,7 +1627,7 @@ def main():
                                             predictions_dict[model_name] = y_pred
                                         
                                     except Exception as e:
-                                        st.warning(f"⚠️ {model_name} failed: {str(e)[:100]}")
+                                        st.warning(f"{model_name} failed: {str(e)[:100]}")
                                     
                                     progress_bar.progress((i + 1) / len(selected_models))
                                 
@@ -1669,11 +1645,11 @@ def main():
                                     st.session_state.model_metrics = metrics_df
                                     st.session_state.predictions = predictions_dict
                                     
-                                    st.success(f"✅ Successfully trained {len(all_metrics)} models")
+                                    st.success(f"Successfully trained {len(all_metrics)} models")
                                     
                                     # Display results
                                     st.markdown("---")
-                                    st.markdown("### 📈 Predictions vs Actual")
+                                    st.markdown("### Predictions vs Actual")
                                     
                                     if predictions_dict and st.session_state.test_dates is not None:
                                         fig_predictions = plot_predictions_vs_actual(
@@ -1684,7 +1660,7 @@ def main():
                                         st.plotly_chart(fig_predictions, use_container_width=True)
                                     
                                     st.markdown("---")
-                                    st.markdown("### 📊 Model Performance Metrics")
+                                    st.markdown("### Model Performance Metrics")
                                     
                                     # Format metrics for display
                                     display_metrics = metrics_df.copy()
@@ -1696,7 +1672,7 @@ def main():
                                     st.dataframe(display_metrics, use_container_width=True)
                                     
                                     # Best model highlights
-                                    st.markdown("### 🏆 Best Performing Models")
+                                    st.markdown("### Best Performing Models")
                                     
                                     col1, col2, col3 = st.columns(3)
                                     
@@ -1724,7 +1700,7 @@ def main():
                                     
                                     # Feature importance (for tree-based models)
                                     st.markdown("---")
-                                    st.markdown("### 🌲 Feature Importance Analysis")
+                                    st.markdown("### Feature Importance Analysis")
                                     
                                     tree_models = ['Random Forest', 'Gradient Boosting']
                                     available_tree_models = [m for m in tree_models if m in forecaster.models]
@@ -1744,17 +1720,17 @@ def main():
                                                 st.plotly_chart(fig_importance, use_container_width=True)
                                     
                                 else:
-                                    st.error("❌ No models were successfully trained")
+                                    st.error("No models were successfully trained")
                                     
                             except Exception as e:
-                                st.error(f"❌ Training failed: {str(e)}")
+                                st.error(f"Training failed: {str(e)}")
                 
                 # Display previous results if available
                 elif st.session_state.model_metrics is not None and not st.session_state.model_metrics.empty:
-                    st.info("📊 Previous training results loaded")
+                    st.info("Previous training results loaded")
                     
                     st.markdown("---")
-                    st.markdown("### 📈 Predictions vs Actual")
+                    st.markdown("### Predictions vs Actual")
                     
                     if st.session_state.predictions and st.session_state.y_test is not None:
                         fig_predictions = plot_predictions_vs_actual(
@@ -1765,7 +1741,7 @@ def main():
                         st.plotly_chart(fig_predictions, use_container_width=True)
                     
                     st.markdown("---")
-                    st.markdown("### 📊 Model Performance Metrics")
+                    st.markdown("### Model Performance Metrics")
                     
                     metrics_df = st.session_state.model_metrics
                     display_metrics = metrics_df.copy()
@@ -1777,7 +1753,7 @@ def main():
                     st.dataframe(display_metrics, use_container_width=True)
                     
                     # Best model highlights
-                    st.markdown("### 🏆 Best Performing Models")
+                    st.markdown("### Best Performing Models")
                     
                     col1, col2, col3 = st.columns(3)
                     
@@ -1804,20 +1780,20 @@ def main():
                         st.markdown('</div>', unsafe_allow_html=True)
                 
                 else:
-                    st.info("👆 Select models and click 'Train Selected Models' to start")
+                    st.info("Select models and click 'Train Selected Models' to start")
         else:
-            st.warning("⚠️ Please collect data first in the 'Data Collection' tab")
+            st.warning("Please collect data first in the 'Data Collection' tab")
     
     # =============================================================================
     # TAB 3: ANALYSIS & INSIGHTS
     # =============================================================================
     with tab3:
-        st.markdown('<p class="sub-header">📈 Analysis & Research Insights</p>', unsafe_allow_html=True)
+        st.markdown('<p class="sub-header">Analysis & Research Insights</p>', unsafe_allow_html=True)
         
         if st.session_state.data is not None:
             df = st.session_state.data
             
-            st.markdown("### 🌍 Rural India Solar Potential Analysis")
+            st.markdown("### Rural India Solar Potential Analysis")
             
             # Climate zone analysis
             if 'climate_zone' in df.columns:
@@ -1825,7 +1801,7 @@ def main():
                 st.info(f"**Climate Zone:** {climate_zone}")
             
             # Seasonal patterns
-            st.markdown("### 📅 Seasonal Patterns")
+            st.markdown("### Seasonal Patterns")
             
             fig_seasonal = plot_seasonal_patterns(df)
             if fig_seasonal:
@@ -1833,7 +1809,7 @@ def main():
             
             # Monthly statistics
             if 'month' in df.columns and 'solar_power_kwh' in df.columns:
-                st.markdown("### 📊 Monthly Generation Statistics")
+                st.markdown("### Monthly Generation Statistics")
                 
                 monthly_stats = df.groupby('month').agg({
                     'solar_power_kwh': ['mean', 'std', 'min', 'max']
@@ -1845,13 +1821,13 @@ def main():
                 st.dataframe(monthly_stats, use_container_width=True)
             
             # Research insights
-            st.markdown("### 🔬 Research Findings & Insights")
+            st.markdown("### Research Findings & Insights")
             
             col1, col2 = st.columns(2)
             
             with col1:
                 st.markdown("""
-                **📌 Key Observations:**
+                **Key Observations:**
                 - **Seasonal Variation:** Solar output varies significantly with seasons
                 - **Monsoon Impact:** 30-50% reduction during monsoon months
                 - **Optimal Period:** March-May shows peak generation
@@ -1864,7 +1840,7 @@ def main():
                     best_model = metrics_df['RMSE'].idxmin()
                     
                     st.markdown(f"""
-                    **📌 Model Performance:**
+                    **Model Performance:**
                     - **Best Model:** {best_model}
                     - **Average R² Score:** {metrics_df['R2'].mean():.3f}
                     - **Average RMSE:** {metrics_df['RMSE'].mean():.3f} kWh
@@ -1872,14 +1848,14 @@ def main():
                     """)
                 else:
                     st.markdown("""
-                    **📌 Model Performance:**
+                    **Model Performance:**
                     - Train models to see performance metrics
                     - Compare statistical vs ML approaches
                     - Evaluate ensemble methods
                     """)
             
             # Recommendations
-            st.markdown("### 💡 Recommendations for Rural Solar Deployment")
+            st.markdown("### Recommendations for Rural Solar Deployment")
             
             recommendations = pd.DataFrame({
                 'Parameter': [
@@ -1901,18 +1877,18 @@ def main():
             st.dataframe(recommendations, use_container_width=True, hide_index=True)
             
             # Export report
-            st.markdown("### 📋 Generate Research Report")
+            st.markdown("### Generate Research Report")
             
-            if st.button("📄 Generate Analysis Report", use_container_width=True):
+            if st.button("Generate Analysis Report", use_container_width=True):
                 st.success("Report generation complete! (Demo - download functionality in production)")
                 
         else:
-            st.info("👆 Collect data first to view analysis and insights")
+            st.info("Collect data first to view analysis and insights")
     
     # Footer
     st.markdown("""
     <div class="footer">
-        <p>☀️ Solar Power Forecasting for Rural India - Research Study</p>
+        <p>Solar Power Forecasting for Rural India - Research Study</p>
         <p style="font-size: 0.75rem; margin-top: 5px;">
             Data Sources: NASA POWER API, Open-Meteo, SolarGIS (Public Demos) | 
             Models: Statistical + Machine Learning Hybrid Approach<br>
